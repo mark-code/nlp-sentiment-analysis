@@ -1,0 +1,79 @@
+from absl import logging
+
+import tensorflow as tf
+import tensorflow_hub as hub
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
+import re
+import seaborn as sns
+
+sentences = []
+labels = []
+with open("Downloads\semeval_twitter_data.txt", encoding="utf-8") as f:
+    lines = f.readlines()
+    for i, entry in enumerate(lines):
+        data_list = []
+        for texts in entry.split("\t"):
+            data_list.append(texts)
+        sentences.append(data_list[3])
+        if data_list[2] == '"positive"':
+            labels.append(1)
+        elif data_list[2] == '"neutral"':
+            labels.append(0.66)
+        elif data_list[2] == '"negative"':
+            labels.append(0)
+        elif data_list[2] == '"objective"':
+            labels.append(0.33)
+
+
+training_sentences = sentences[:6000]
+testing_sentences = sentences[6000:]
+
+training_labels = labels[:6000]
+testing_labels = labels[6000:]
+
+train_df = pd.DataFrame()
+test_df = pd.DataFrame()
+
+train_df['sentence'] = training_sentences
+train_df['polarity'] = training_labels
+
+test_df['sentence'] = testing_sentences
+test_df['polarity'] = testing_labels
+
+
+
+
+# Reduce logging output.
+logging.set_verbosity(logging.ERROR)
+
+# Training input on the whole training set with no limit on training epochs.
+train_input_fn = tf.compat.v1.estimator.inputs.pandas_input_fn(
+    train_df, train_df["polarity"], num_epochs=None, shuffle=True)
+
+# Prediction on the whole training set.
+predict_train_input_fn = tf.compat.v1.estimator.inputs.pandas_input_fn(
+    train_df, train_df["polarity"], shuffle=False)
+# Prediction on the test set.
+predict_test_input_fn = tf.compat.v1.estimator.inputs.pandas_input_fn(
+    test_df, test_df["polarity"], shuffle=False)
+
+embedded_text_feature_column = hub.text_embedding_column(
+    key="sentence", 
+    module_spec="https://tfhub.dev/google/nnlm-en-dim128/1")
+
+estimator = tf.estimator.DNNClassifier(
+    hidden_units=[500, 100],
+    feature_columns=[embedded_text_feature_column],
+    n_classes=2,
+    optimizer=tf.keras.optimizers.Adagrad(lr=0.003))
+
+estimator.train(input_fn=train_input_fn, steps=5000);
+
+train_eval_result = estimator.evaluate(input_fn=predict_train_input_fn)
+test_eval_result = estimator.evaluate(input_fn=predict_test_input_fn)
+
+print("Training set accuracy: {accuracy}".format(**train_eval_result))
+print("Test set accuracy: {accuracy}".format(**test_eval_result))
