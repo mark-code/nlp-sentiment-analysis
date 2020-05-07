@@ -77,7 +77,7 @@ model.add(tf.keras.layers.Flatten())
 model.add(tf.keras.layers.Dense(16, activation='relu'))
 model.add(tf.keras.layers.Dense(1, activation = 'sigmoid'))
 
-model.compile(loss='mean_squared_error',optimizer='adam',metrics=['accuracy'])
+model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
 model.summary()
 
 for i in range(1,indices):  
