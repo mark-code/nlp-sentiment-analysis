@@ -28,6 +28,7 @@ with open("Downloads\semeval_twitter_data.txt", encoding="utf-8") as f:
             labels.append(0.33)
 
 
+
 training_sentences = sentences[:6000]
 testing_sentences = sentences[6000:]
 
@@ -62,7 +63,7 @@ predict_test_input_fn = tf.compat.v1.estimator.inputs.pandas_input_fn(
 
 embedded_text_feature_column = hub.text_embedding_column(
     key="sentence", 
-    module_spec="https://tfhub.dev/google/nnlm-en-dim128/1")
+    module_spec="https://tfhub.dev/google/universal-sentence-encoder/2")
 
 estimator = tf.estimator.DNNClassifier(
     hidden_units=[500, 100],
