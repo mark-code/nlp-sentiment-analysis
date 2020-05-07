@@ -47,17 +47,17 @@ test_df['polarity'] = testing_labels
 
 
 
-# Reduce logging output.
+
 logging.set_verbosity(logging.ERROR)
 
-# Training input on the whole training set with no limit on training epochs.
+
 train_input_fn = tf.compat.v1.estimator.inputs.pandas_input_fn(
     train_df, train_df["polarity"], num_epochs=None, shuffle=True)
 
-# Prediction on the whole training set.
+
 predict_train_input_fn = tf.compat.v1.estimator.inputs.pandas_input_fn(
     train_df, train_df["polarity"], shuffle=False)
-# Prediction on the test set.
+
 predict_test_input_fn = tf.compat.v1.estimator.inputs.pandas_input_fn(
     test_df, test_df["polarity"], shuffle=False)
 
