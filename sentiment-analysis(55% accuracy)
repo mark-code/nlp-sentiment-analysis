@@ -1,3 +1,7 @@
+#ACCURACY 70%
+#VALIDATION ACCURACY 55%
+
+
 import numpy as np 
 import tensorflow as tf
 from tensorflow.python.ops  import *
