@@ -1,19 +1,12 @@
-import pandas as pd 
 import numpy as np 
-import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.python.ops  import *
 from tensorflow import keras
 import tensorflow_hub as hub
-import tensorflow_datasets as tfds
-import csv
-from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras import layers
 import bert
-import json
-import random
-import math
+
 
 BertTokenizer = bert.bert_tokenization.FullTokenizer
 bert_layer = hub.KerasLayer("https://tfhub.dev/tensorflow/bert_en_uncased_L-12_H-768_A-12/1",
